@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Game Store</title>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css'><link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div class="container">
+			<nav>
+				<div class="logo">
+					<i class="fab fa-playstation"></i>
+				</div>
+				<ul>
+					<li class="active">
+						<i class="fas fa-home"></i>
+					</li>
+					<li>
+						<i class="fas fa-tv"></i>
+					</li>
+					<li>
+						<i class="fas fa-user-friends"></i>
+					</li>
+					<li>
+						<i class="fas fa-chart-pie"></i>
+					</li>
+					<li>
+						<i class="fas fa-shopping-bag"></i>
+					</li>
+				</ul>
+			</nav>
+			<div class="right-main">
+				<div class="main-top">
+					<div class="search">
+						<i class="fas fa-search"></i>
+						<input type="text" placeholder="Search..." />
+					</div>
+					<div class="top">
+						<i class="fas fa-bell"></i>
+						<i class="fas fa-shopping-cart"></i>
+						<i class="fas fa-user-circle"></i>
+						<i class="fas fa-bars" id="hamburger"></i>
+					</div>
+				</div>
+				<div class="main-flex">
+					<main>
+						<header>
+							<div class="tag">New</div>
+							<h1>Marvel's Spider-Man: Myles Morals</h1>
+							<div class="purchase">
+								<h2>$99.99</h2>
+								<button>Purchase</button>
+							</div>
+							<div class="spiderman-img">
+								<img
+									src="https://image.api.playstation.com/vulcan/ap/rnd/202008/1020/D2APa7eBrNew2zVipbfI0QXt.png"
+									alt="spiderman"
+									draggable="false"
+								/>
+							</div>
+						</header>
+						<div class="most-played">
+							<h3>Trending Games</h3>
+							<div class="cards">
+								<div class="games-card">
+									<div class="game-image-container">
+										<img
+											src="https://elintranews.com/wp-content/uploads/2020/11/Assassins-Creed-Valhalla.jpg"
+											alt="ac-valhalla"
+										/>
+									</div>
+
+									<h4>Assassins Creed Valhalla</h4>
+									<p>$120.50</p>
+								</div>
+								<div class="games-card">
+									<div class="game-image-container">
+										<img
+											src="https://nerdreactor.com/wp-content/uploads/2019/08/Cyberpunk-2077.jpg"
+											alt="cyberpunk"
+										/>
+									</div>
+									<h4>Cyberpunk 2077</h4>
+									<p>$150.50</p>
+								</div>
+								<div class="games-card">
+									<div class="game-image-container">
+										<img
+											src="https://pixelz.cc/wp-content/uploads/2017/11/far-cry-5-artwork-joseph-seed-uhd-8k-wallpaper.jpg"
+											alt="Farcry5"
+										/>
+									</div>
+									<h4>Far Cry 5</h4>
+									<p>$100.99</p>
+								</div>
+							</div>
+						</div>
+					</main>
+					<aside>
+						<div class="library">
+							<h3>Library</h3>
+							<div class="library-card">
+								<div class="game-logo">
+									<img
+										src="https://cdn.shopify.com/s/files/1/0747/3829/products/mL2363_1024x1024.jpg?v=1571445542"
+										alt=""
+									/>
+								</div>
+								<div class="game-details">
+									<h4>Red Dead Redemption</h4>
+									<p>PS4</p>
+								</div>
+								<i class="fas fa-download"></i>
+							</div>
+							<div class="library-card">
+								<div class="game-logo">
+									<img
+										src="https://www.vgr.com/wp-content/uploads/2020/05/GTA-V-Premium-Edition-Free-Giveaway-Epic-Games-Store.jpg"
+										alt=""
+									/>
+								</div>
+								<div class="game-details">
+									<h4>Gran Theft Auto V</h4>
+									<p>PS4 & PS5</p>
+								</div>
+								<i class="far fa-check-circle"></i>
+							</div>
+							<div class="library-card">
+								<div class="game-logo">
+									<img
+										src="https://i2.wp.com/technosports.co.in/wp-content/uploads/2020/10/Screenshot-189.png?fit=1920%2C1080&ssl=1"
+										alt=""
+									/>
+								</div>
+								<div class="game-details">
+									<h4>Fifa 21</h4>
+									<p>PS4</p>
+								</div>
+								<i class="fas fa-download"></i>
+							</div>
+							<hr />
+							<h3>Social</h3>
+							<div class="library-card">
+								<div class="game-logo">
+									<img
+										src="https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"
+										alt=""
+									/>
+								</div>
+								<div class="game-details">
+									<h4>Adramelech</h4>
+									<p>Playing Resident Evil Village</p>
+								</div>
+								<div class="online"></div>
+							</div>
+							<div class="library-card">
+								<div class="game-logo">
+									<img
+										src="https://cdn3.iconfinder.com/data/icons/avatars-round-flat/33/man4-512.png"
+										alt=""
+									/>
+								</div>
+								<div class="game-details">
+									<h4>Phase Runner</h4>
+									<p>Offline</p>
+								</div>
+								<div class="offline"></div>
+							</div>
+							<div class="library-card">
+								<div class="game-logo">
+									<img
+										src="https://cdn.iconscout.com/icon/free/png-256/avatar-373-456325.png"
+										alt=""
+									/>
+								</div>
+								<div class="game-details">
+									<h4>Elena</h4>
+									<p>Playing The Witcher 3: Wild Hunt</p>
+								</div>
+								<div class="online"></div>
+							</div>
+						</div>
+					</aside>
+				</div>
+			</div>
+		</div>
+		<div class="attribution">
+			Designed By <a href="https://dribbble.com/elliottwilkie" target="_blank">Elliott</a> Coded By
+			<a href="https://github.com/adram3l3ch" target="_blank">Adarsh</a>
+		</div>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

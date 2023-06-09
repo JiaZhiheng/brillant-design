@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>游戏速报</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+  <link rel="stylesheet" href="./css/index.css">
+  <link rel="shortcut icon" href="./gamedate.ico" type="image/x-icon">
+</head>
+
+<body>
+  <h1>游 戏 速 报</h1>
+  <div class="container right-panel-active">
+    <!-- 注册 -->
+    <div class="container_form container--signup">
+      <form action="#" class="form" id="form1">
+        <h2 class="form_title">Sign Up</h2>
+        <input type="text" placeholder="User" value="Assassin" class="input" />
+        <input type="email" placeholder="Email" value="gamedate@163.com" class="input" />
+        <input type="password" placeholder="Password" value="123456" class="input" />
+        <button class="btn" onclick="sign()">Sign Up</a></button>
+      </form>
+    </div>
+
+    <!-- 登录 -->
+    <div class="container_form container--signin">
+      <form action="#" class="form" id="form2">
+        <h2 class="form_title">Sign In</h2>
+        <input type="email" placeholder="Email" value="gamedate@163.com" class="input" />
+        <input type="password" placeholder="Password" value="123456" class="input" />
+        <a href="#" class="link">Forgot your password?</a>
+        <button class="btn" onclick="login()">Sign In</button>
+      </form>
+    </div>
+
+    <!-- 浮层 -->
+    <div class="container_overlay">
+      <div class="overlay">
+        <div class="overlay_panel overlay--left">
+          <button class="btn" id="signIn">Sign In</button>
+        </div>
+        <div class="overlay_panel overlay--right">
+          <button class="btn" id="signUp">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 背景 -->
+  <div class="slidershow">
+    <div class="slidershow--image" style="background-image: url('./img/Assassin\'s\ Creed\ Origins.jpg')"></div>
+    <div class="slidershow--image" style="background-image: url('./img/Assassin\'s\ Creed\ Valhalla.jpg')"></div>
+    <div class="slidershow--image" style="background-image: url('./img/Assassin\'s\ Creed\ Unity.jpg"></div>
+    <div class="slidershow--image" style="background-image: url('./img/Assassin\'s\ Creed\ Revelations.jpg')"></div>
+  </div>
+
+  <!-- partial -->
+  <script src="./js/script.js"></script>
+</body>
+
+</html>
