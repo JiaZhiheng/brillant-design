@@ -1,0 +1,164 @@
+body,
+h1 {
+  text-align: center;
+}
+
+body {
+  margin: 4px;
+}
+
+h1 {
+  margin: 16px 0;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.sidebar {
+  padding: 10px;
+  width: 80px;
+  background: #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item {
+  width: 100%;
+  line-height: 40px;
+  text-align: center;
+  cursor: move;
+}
+
+.button {
+  box-sizing: border-box;
+  width: 100%;
+  line-height: 36px;
+  text-align: center;
+  padding: 0;
+}
+
+.magenta {
+  color: #c41d7f;
+  background: #ffadd2;
+}
+
+.red {
+  color: #cf1322;
+  background: #ffa39e;
+}
+
+.volcano {
+  color: #d4380d;
+  background: #ffbb96;
+}
+
+.orange {
+  color: #d46b08;
+  background: #ffd591;
+}
+
+.gold {
+  color: #d48806;
+  background: #ffe58f;
+}
+
+.lime {
+  color: #7cb305;
+  background: #eaff8f;
+}
+
+.green {
+  color: #389e0d;
+  background: #b7eb8f;
+}
+
+.cyan {
+  color: #08979c;
+  background: #87e8de;
+}
+
+.blue {
+  color: #0958d9;
+  background: #91caff;
+}
+
+.geekblue {
+  color: #1d39c4;
+  background: #adc6ff;
+}
+
+.purple {
+  color: #531dab;
+  background: #d3adf7;
+}
+
+.success {
+  color: #52c41a;
+  background: #b7eb8f;
+}
+
+.processing {
+  color: #1677ff;
+  background: #91caff;
+}
+
+.error {
+  color: #ff4d4f;
+  background: #ffccc7;
+}
+
+.warning {
+  color: #faad14;
+  background: #ffe58f;
+}
+
+.default {
+  color: rgba(0, 0, 0, 0.88);
+  background: #d9d9d9;
+}
+
+.content {
+  background: #eee;
+  width: 800px;
+  padding: 10px;
+}
+
+.info {
+  display: flex;
+  justify-content: center;
+  gap: 256px;
+  margin: 16px 0;
+}
+
+table {
+  width: 100%;
+}
+
+td,
+th {
+  border: 1px solid #999;
+  height: 40px;
+  padding: 2px;
+  text-align: center;
+}
+
+th {
+  font-weight: normal;
+  background: #ccc;
+}
+
+td[data-drop="copy"] {
+  width: 80px;
+}
+
+.period {
+  line-height: 40px;
+}
+
+.drop-over {
+  background: #666;
+}
