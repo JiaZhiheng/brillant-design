@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>定制课程表</title>
+  <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="./index.css" />
+  <script src="./index.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.0/html2canvas.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="content" id="content">
+      <h1 class="editable">课程表</h1>
+      <div class="info">
+        <div class="editable">班级: ****</div>
+        <div class="editable">班主任: ***</div>
+      </div>
+      <table>
+        <colgroup>
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="editable" colspan="2">时间</th>
+            <th class="controlable editable">星期一</th>
+            <th class="controlable editable">星期二</th>
+            <th class="controlable editable">星期三</th>
+            <th class="controlable editable">星期四</th>
+            <th class="controlable editable">星期五</th>
+            <th class="controlable editable">星期六</th>
+            <th class="controlable editable">星期日</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th class="controlable editable" rowspan="6">上午</th>
+            <td class="controlable editable">09:00-09:30</td>
+            <td class="editable" colspan="7">早读</td>
+          </tr>
+          <tr>
+            <td class="controlable editable">09:35-10:20</td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+          </tr>
+          <tr>
+            <td class="controlable editable">10:30-11:15</td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+          </tr>
+          <tr>
+            <td class="controlable editable">11:15-11:40</td>
+            <td class="editable" colspan="7">课间操</td>
+          </tr>
+          <tr>
+            <td class="controlable editable">11:40-12:25</td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+          </tr>
+          <tr>
+            <td class="controlable editable">12:35-13:20</td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+          </tr>
+          <tr>
+            <th class="controlable editable" rowspan="1">中午</th>
+            <td class="controlable editable">13:20-16:30</td>
+            <td class="editable" colspan="7">午休</td>
+          </tr>
+          <tr>
+            <th class="controlable editable" rowspan="5">下午</th>
+            <td class="controlable editable">16:35-17:20</td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+          </tr>
+          <tr>
+            <td class="controlable editable">17:30-18:15</td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+          </tr>
+          <tr>
+            <td class="controlable editable">18:15-18:30</td>
+            <td class="editable" colspan="7">眼保健操</td>
+          </tr>
+          <tr>
+            <td class="controlable editable">18:30-19:15</td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+          </tr>
+          <tr>
+            <td class="controlable editable">19:25-20:10</td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+          </tr>
+          <tr>
+            <th class="controlable editable" rowspan="3">晚上</th>
+            <td class="controlable editable">20:10-21:00</td>
+            <td class="editable" colspan="7">晚饭</td>
+          </tr>
+          <tr>
+            <td class="controlable editable">21:00-21:45</td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+          </tr>
+          <tr>
+            <td class="controlable editable">21:55-22:40</td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+            <td data-drop="copy"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sidebar">
+      <ul class="context">
+        <li class="static">功能介绍: </li>
+        <li class="static">移动鼠标至任一按钮上方即可显示该按钮的功能描述。</li>
+        <li class="arrange">排课: 当课程表为空时，该功能允许您自动按照预设的算法规则进行课程安排。仅在拖拽模式下可用。</li>
+        <li class="empty">清空: 此功能将移除课程表内的所有课程信息，使其恢复到初始状态。仅在拖拽模式下可用。</li>
+        <li class="coloring">着色: 此功能允许您给课程表内的各个课程添加颜色标记，以方便区分。仅在拖拽模式下可用。</li>
+        <li class="fade">褪色: 此功能用于将课程表内已着色的课程恢复到无色状态，移除颜色标记。仅在拖拽模式下可用。</li>
+        <li class="print">打印: 将当前显示的课程表保存为 PNG 格式的图片文件，可供打印。仅在拖拽模式下可用。</li>
+        <li class="drag">拖拽: 切换到拖拽模式时，您可以将右侧卡片拖动至课程表中。如果放置位置不正确，您可以重新拖动该卡片以调整其位置。</li>
+        <li class="edit">编辑: 激活编辑模式后，课程表和卡片内容将变为可编辑状态。您可以直接双击来编辑内容，也可以增加或删除课程表行列及右侧卡片槽中的卡片。</li>
+        <li class="archive">存档: 此功能允许您将当前课程表内容保存至 localStorage 中。仅在拖拽模式下可用，方便将课程表设定保持不变。</li>
+        <li class="load">读档: 此功能允许您从 localStorage 中读取之前保存的课程表信息。仅在拖拽模式下可用。</li>
+        <li class="init">初始化: 此功能允许您将项目恢复到最初状态，并清除 localStorage 中保存的所有内容。仅在拖拽模式下可用。</li>
+      </ul>
+      <div class="card" data-drop="move">
+        <div data-effect="copy" data-type="major" draggable="true" class="magenta item">语文</div>
+        <div data-effect="copy" data-type="major" draggable="true" class="red item">数学</div>
+        <div data-effect="copy" data-type="major" draggable="true" class="volcano item">英语</div>
+        <div data-effect="copy" data-type="science" draggable="true" class="orange item">物理</div>
+        <div data-effect="copy" data-type="science" draggable="true" class="gold item">化学</div>
+        <div data-effect="copy" data-type="science" draggable="true" class="lime item">生物</div>
+        <div data-effect="copy" data-type="humanities" draggable="true" class="green item">政治</div>
+        <div data-effect="copy" data-type="humanities" draggable="true" class="cyan item">历史</div>
+        <div data-effect="copy" data-type="humanities" draggable="true" class="blue item">地理</div>
+        <div data-effect="copy" data-type="minor" draggable="true" class="geekblue item">音乐</div>
+        <div data-effect="copy" data-type="minor" draggable="true" class="purple item">美术</div>
+        <div data-effect="copy" data-type="minor" draggable="true" class="success item">体育</div>
+        <div data-effect="copy" data-type="minor" draggable="true" class="processing item">科学</div>
+        <div data-effect="copy" data-type="patch" draggable="true" class="error item">班会</div>
+        <div data-effect="copy" data-type="patch" draggable="true" class="warning item">自习</div>
+        <div data-effect="copy" data-type="minor" draggable="true" class="magenta item">综合实践</div>
+        <div data-effect="copy" data-type="minor" draggable="true" class="red item">信息技术</div>
+        <div data-effect="copy" data-type="minor" draggable="true" class="volcano item">思想品德</div>
+        <div data-effect="copy" data-type="minor" draggable="true" class="orange item">心理健康</div>
+        <button class="button add" title="add" disabled onclick="addCard()"></button>
+      </div>
+      <div class="control">
+        <button class="button arrange" onclick="arrange()">排课</button>
+        <button class="button empty" onclick="empty()">清空</button>
+        <button class="button coloring" onclick="coloring()">着色</button>
+        <button class="button fade" onclick="fade()">褪色</button>
+        <button class="button print" onclick="print()">打印</button>
+        <button class="button drag" disabled onclick="drag()">拖拽</button>
+        <button class="button edit" onclick="edit()">编辑</button>
+        <button class="button archive" onclick="archive()">存档</button>
+        <button class="button load" onclick="load()">读档</button>
+        <button class="button init" onclick="init()">初始化</button>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
