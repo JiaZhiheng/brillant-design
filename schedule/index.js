@@ -315,7 +315,7 @@ container.ondragenter = (e) => {
   if (!dropNode) {
     return;
   }
-  if (e.dataTransfer.effectAllowed === 'copy' || e.dataTransfer.effectAllowed === 'move') {
+  if (e.dataTransfer.effectAllowed === 'move' || e.dataTransfer.effectAllowed === dropNode.dataset.drop) {
     dropNode.classList.add('drop-over');
   }
 };
@@ -335,14 +335,12 @@ container.ondrop = (e) => {
       }
       if (source.dataset.effect === 'move') {
         dropNode.appendChild(source);
-        source.addEventListener('dblclick', editableEvent);
       } else if (source.dataset.effect === 'copy') {
         let clone = source.cloneNode(true);
         clone.dataset.effect = 'move';
         clone.draggable = true;
         clone.ondragstart = handleDragStart;
         dropNode.appendChild(clone);
-        clone.addEventListener('dblclick', editableEvent);
       }
     }
   }
@@ -469,9 +467,6 @@ function arrange() {
 
     // 允许拖动
     clone.draggable = true;
-
-    // 绑定事件监听器
-    clone.addEventListener('dblclick', editableEvent);
 
     // 追加克隆的课程到单元格
     slot.appendChild(clone);
