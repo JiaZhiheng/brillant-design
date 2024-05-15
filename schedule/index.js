@@ -517,7 +517,7 @@ function print() {
 // 拖拽
 function drag() {
   // 切换显示控制图标
-  var controlableElements = document.querySelectorAll('.controlable, .item');
+  var controlableElements = document.querySelectorAll('.controlable, .item, [data-controlable="merge"], [data-controlable="split"]');
   controlableElements.forEach(function (element) {
     element.classList.toggle('show-control-icon');
   });

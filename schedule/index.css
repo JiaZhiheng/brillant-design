@@ -163,6 +163,7 @@ body td {
   flex-direction: column;
   gap: 10px;
   margin: 0 0 16px;
+  min-height: 160px;
 }
 
 .context li {
