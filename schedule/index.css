@@ -212,6 +212,7 @@ body td {
   right: -8px;
   height: 16px;
   width: 16px;
+  cursor: pointer;
 }
 
 .add {
@@ -232,6 +233,7 @@ body td {
   display: block;
   height: 24px;
   width: 24px;
+  cursor: pointer;
 }
 
 .control {

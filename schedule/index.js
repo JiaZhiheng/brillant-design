@@ -996,5 +996,3 @@ function handleCellClick(event, position, triggerEvent) {
     triggerEvent(event);
   }
 }
-
-
