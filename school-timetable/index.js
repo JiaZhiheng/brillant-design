@@ -91,6 +91,9 @@ function getDropNode(node) {
 
 // 处理拖动开始时的事件，设置拖动效果和存储源元素
 function handleDragStart(e) {
+  console.log(e);
+  console.log(e.dataTransfer);
+  console.log(e.target);
   e.dataTransfer.effectAllowed = e.target.dataset.effect;
   source = e.target;
 }

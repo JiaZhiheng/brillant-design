@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Lazy Loading Demo</title>
+    <style>
+        .image-container {
+            width: 960px;
+            height: 540px;
+        }
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Lazy Loading Demo</h1>
+    <div class="image-container">
+        <img data-src="./images/1.png" alt="Placeholder 1">
+    </div>
+    <div class="image-container">
+        <img data-src="./images/2.png" alt="Placeholder 2">
+    </div>
+    <div class="image-container">
+        <img data-src="./images/3.png" alt="Placeholder 3">
+    </div>
+    <div class="image-container">
+        <img data-src="./images/4.png" alt="Placeholder 4">
+    </div>
+    <div class="image-container">
+        <img data-src="./images/5.png" alt="Placeholder 5">
+    </div>
+    <div class="image-container">
+        <img data-src="./images/6.png" alt="Placeholder 6">
+    </div>
+    <div class="image-container">
+        <img data-src="./images/7.png" alt="Placeholder 7">
+    </div>
+    <div class="image-container">
+        <img data-src="./images/8.png" alt="Placeholder 8">
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const images = document.querySelectorAll('img[data-src]');
+            
+            const config = {
+                root: null, // Use the viewport as the container
+                rootMargin: '0px',
+                threshold: 0.1 // Trigger when 10% of the target is in view
+            };
+            
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries, self) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            preloadImage(entry.target);
+                            self.unobserve(entry.target);
+                        }
+                    });
+                }, config);
+                
+                images.forEach(image => {
+                    observer.observe(image);
+                });
+            } else {
+                console.log('Intersection Observers not supported');
+                // Fallback for older browsers
+                images.forEach(image => {
+                    preloadImage(image);
+                });
+            }
+            
+            function preloadImage(img) {
+                const src = img.getAttribute('data-src');
+                if (!src) { return; }
+                img.src = src;
+                img.removeAttribute('data-src');
+            }
+        });
+    </script>
+</body>
+</html>

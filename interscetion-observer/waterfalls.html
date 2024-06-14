@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masonry Layout Lazy Loading Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .grid {
+            column-count: 3;
+            column-gap: 10px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .grid-item {
+            position: relative;
+            margin-bottom: 10px;
+            background-color: #f7f7f7;
+            break-inside: avoid;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .grid-item img {
+            width: 100%;
+            display: block;
+        }
+        .loading {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Masonry Layout Lazy Loading Demo</h1>
+    <div id="grid" class="grid"></div>
+    <div id="loading" class="loading">Loading...</div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const grid = document.getElementById('grid');
+            const loading = document.getElementById('loading');
+            let currentPage = 1;
+
+            const fetchImages = (page) => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        const images = [];
+                        for (let i = 1; i <= 10; i++) {
+                            const height = Math.floor(Math.random() * (400 - 200 + 1)) + 200;
+                            images.push({
+                                src: `https://via.placeholder.com/300x${height}?text=Image+${(page - 1) * 10 + i}`,
+                                alt: `Image ${(page - 1) * 10 + i}`
+                            });
+                        }
+                        resolve(images);
+                    }, 1000);
+                });
+            };
+
+            const loadImages = async (page) => {
+                const images = await fetchImages(page);
+                images.forEach(image => {
+                    const item = document.createElement('div');
+                    item.classList.add('grid-item');
+                    const img = document.createElement('img');
+                    img.dataset.src = image.src;
+                    img.alt = image.alt;
+                    item.appendChild(img);
+                    grid.appendChild(item);
+                });
+                if ('IntersectionObserver' in window) {
+                    lazyLoad();
+                } else {
+                    loadAllImages();
+                }
+            };
+
+            const lazyLoad = () => {
+                const images = document.querySelectorAll('img[data-src]');
+                const config = {
+                    root: null,
+                    rootMargin: '0px',
+                    threshold: 0.1
+                };
+                
+                const observer = new IntersectionObserver((entries, self) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            img.src = img.dataset.src;
+                            img.removeAttribute('data-src');
+                            self.unobserve(img);
+                        }
+                    });
+                }, config);
+
+                images.forEach(image => {
+                    observer.observe(image);
+                });
+            };
+
+            const loadAllImages = () => {
+                const images = document.querySelectorAll('img[data-src]');
+                images.forEach(image => {
+                    image.src = image.dataset.src;
+                    image.removeAttribute('data-src');
+                });
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    currentPage++;
+                    loadImages(currentPage);
+                }
+            }, { threshold: 1.0 });
+
+            observer.observe(loading);
+
+            // Initial load
+            loadImages(currentPage);
+        });
+    </script>
+</body>
+</html>

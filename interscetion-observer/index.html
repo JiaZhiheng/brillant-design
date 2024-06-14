@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Demo 目录</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .directory {
+      width: 400px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .directory-table {
+      display: flex;
+      flex-direction: column;
+      border-collapse: collapse;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .directory-row {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #ddd;
+      padding: 10px;
+    }
+
+    .directory-cell {
+      flex: 1;
+      padding: 10px;
+    }
+
+    .directory-cell a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .directory-cell a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="directory">
+    <h1>文件目录</h1>
+    <div class="directory-table">
+      <div class="directory-row">
+        <a class="directory-cell" href="./lazyload.html" target="_blank">懒加载</a>
+      </div>
+      <div class="directory-row">
+        <a class="directory-cell" href="./waterfalls.html" target="_blank">瀑布流</a>
+      </div>
+      <div class="directory-row">
+        <a class="directory-cell" href="./video.html" target="_blank">小窗播放</a>
+      </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

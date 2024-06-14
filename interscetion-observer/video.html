@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Player on Leave Viewport Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        .spacer {
+            height: 1000px; /* Adjust as needed to ensure ample scroll space */
+            background-color: #eaeaea;
+            margin-bottom: 20px;
+        }
+        video {
+            width: 100%;
+            display: block;
+        }
+        .mini-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 200px;
+            height: auto;
+            z-index: 1000;
+            display: none;
+            background-color: black;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .mini-player video {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mini Player on Leave Viewport Demo</h1>
+    <div class="container">
+        <video controls id="mainVideo" autoplay>
+            <source src="./video/Civil_War_trailer.mp4" type="video/mp4">
+            Your browser does not support HTML video.
+        </video>
+        <div class="spacer"></div>
+    </div>
+
+    <div class="mini-player" id="miniPlayer">
+        <video controls id="miniVideo" autoplay>
+            <source src="./video/Civil_War_trailer.mp4" type="video/mp4">
+            Your browser does not support HTML video.
+        </video>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const mainVideo = document.getElementById('mainVideo');
+            const miniPlayer = document.getElementById('miniPlayer');
+            const miniVideo = document.getElementById('miniVideo');
+
+            // Ensure the video starts playing
+            mainVideo.play().catch(error => {
+                console.log("Autoplay failed due to user interaction requirement.");
+            });
+
+            const config = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0
+            };
+
+            if ('IntersectionObserver' in window) {
+                let isMiniPlayerActive = false;
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            // Video is in viewport
+                            if (isMiniPlayerActive) {
+                                miniPlayer.style.display = 'none';
+                                mainVideo.currentTime = miniVideo.currentTime;
+                                if (!miniVideo.paused) {
+                                    mainVideo.play();
+                                }
+                                miniVideo.pause();
+                                isMiniPlayerActive = false;
+                            }
+                        } else {
+                            // Video is out of viewport
+                            if (!isMiniPlayerActive) {
+                                miniPlayer.style.display = 'block';
+                                miniVideo.currentTime = mainVideo.currentTime;
+                                if (!mainVideo.paused) {
+                                    miniVideo.play();
+                                }
+                                mainVideo.pause();
+                                isMiniPlayerActive = true;
+                            }
+                        }
+                    });
+                }, config);
+
+                observer.observe(mainVideo);
+            } else {
+                console.log('Intersection Observer is not supported by this browser.');
+            }
+        });
+    </script>
+</body>
+</html>
