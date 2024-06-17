@@ -25,7 +25,7 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 200px;
+            width: 300px;
             height: auto;
             z-index: 1000;
             display: none;
@@ -61,6 +61,7 @@
             const mainVideo = document.getElementById('mainVideo');
             const miniPlayer = document.getElementById('miniPlayer');
             const miniVideo = document.getElementById('miniVideo');
+            let isMiniPlayerActive = false;
 
             // Ensure the video starts playing
             mainVideo.play().catch(error => {
@@ -73,37 +74,38 @@
                 threshold: 0
             };
 
-            if ('IntersectionObserver' in window) {
-                let isMiniPlayerActive = false;
-
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            // Video is in viewport
-                            if (isMiniPlayerActive) {
-                                miniPlayer.style.display = 'none';
-                                mainVideo.currentTime = miniVideo.currentTime;
-                                if (!miniVideo.paused) {
-                                    mainVideo.play();
-                                }
-                                miniVideo.pause();
-                                isMiniPlayerActive = false;
+            const handleIntersection = (entries, observer) => {
+                // 遍历所有的观察条目
+                entries.forEach(entry => {
+                    // 检查主视频是否在视口中
+                    if (entry.isIntersecting) {
+                        // 如果迷你播放器是活跃的，隐藏它并同步视频状态
+                        if (isMiniPlayerActive) {
+                            miniPlayer.style.display = 'none';
+                            mainVideo.currentTime = miniVideo.currentTime;
+                            if (!miniVideo.paused) {
+                                mainVideo.play();
                             }
-                        } else {
-                            // Video is out of viewport
-                            if (!isMiniPlayerActive) {
-                                miniPlayer.style.display = 'block';
-                                miniVideo.currentTime = mainVideo.currentTime;
-                                if (!mainVideo.paused) {
-                                    miniVideo.play();
-                                }
-                                mainVideo.pause();
-                                isMiniPlayerActive = true;
-                            }
+                            miniVideo.pause();
+                            isMiniPlayerActive = false;
                         }
-                    });
-                }, config);
+                    } else {
+                        // Video is out of viewport
+                        if (!isMiniPlayerActive) {
+                            miniPlayer.style.display = 'block';
+                            miniVideo.currentTime = mainVideo.currentTime;
+                            if (!mainVideo.paused) {
+                                miniVideo.play();
+                            }
+                            mainVideo.pause();
+                            isMiniPlayerActive = true;
+                        }
+                    }
+                });
+            };
 
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver(handleIntersection, config);
                 observer.observe(mainVideo);
             } else {
                 console.log('Intersection Observer is not supported by this browser.');
