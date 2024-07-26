@@ -1,0 +1,17 @@
+{
+  "name": "pwa-demo",
+  "version": "1.0.0",
+  "description": "PWA Demo with Web Push API and Web Badging API",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "client": "lite-server -c client/bs-config.json"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "web-push": "^3.4.4"
+  },
+  "devDependencies": {
+    "lite-server": "^2.6.1"
+  }
+}

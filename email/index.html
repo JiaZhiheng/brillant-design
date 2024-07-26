@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Badging API Demo</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Badging API Demo</h1>
+        <p>每10秒钟将收到一封模拟邮件，未读邮件计数将显示在应用徽章上。</p>
+        <button id="clearBadge" onclick="clearUnreadCount()">清除徽章</button>
+    </div>
+</body>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+
+.container {
+    text-align: center;
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+</style>
+<script>
+navigator.serviceWorker.register('sw.js').then(registration => {
+    console.log('Service Worker 注册成功:', registration);
+    requestNotificationPermission();
+}).catch(error => {
+    console.error('Service Worker 注册失败:', error);
+});
+
+function requestNotificationPermission() {
+    if (Notification.permission === 'granted') {
+        subscribeUserToPush();
+    } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+                subscribeUserToPush();
+            }
+        });
+    }
+}
+
+function subscribeUserToPush() {
+    navigator.serviceWorker.ready.then(registration => {
+        registration.pushManager.getSubscription().then(subscription => {
+            if (subscription) {
+                console.log('已有订阅:', subscription);
+                return subscription;
+            }
+            return registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array('BGbYUEvYUgjyt-FDzEzmO01y_IJUZWXhi_Yfhs_QoydgU9GSEjm5Pl6dsQQhoTLNqXfe51LuXR9i92Ce_q0eu-c')
+            });
+        }).then(subscription => {
+            console.log('用户已订阅:', subscription);
+            // 在这里显示订阅对象
+            console.log(JSON.stringify(subscription));
+        }).catch(err => {
+            console.error('订阅失败:', err);
+        });
+    });
+}
+
+function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+}
+
+// 清除徽章的方法
+function clearUnreadCount() {
+    unreadCount = 0;
+    if ('clearAppBadge' in navigator) {
+        navigator.clearAppBadge().catch((error) => {
+            console.error('清除徽章失败', error);
+        });
+    }
+}
+</script>
+</html>

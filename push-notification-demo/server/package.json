@@ -1,0 +1,13 @@
+{
+  "name": "push-notification-demo",
+  "version": "1.0.0",
+  "description": "A simple push notification demo",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "web-push": "^3.3.5"
+  }
+}
