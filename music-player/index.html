@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐播放器及波形图</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f8f8f8;
+        }
+        #player {
+            text-align: center;
+            background: #ffffff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #4caf50;
+            color: white;
+        }
+        button:disabled {
+            background: #cccccc;
+        }
+        canvas {
+            margin-top: 20px;
+            background: #000;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="player">
+        <h2>简易音乐播放器及波形图</h2>
+        <!-- 音频元素 -->
+        <audio id="audio" src="./music.mp4" crossorigin="anonymous"></audio>
+        <div>
+            <!-- 播放按钮 -->
+            <button id="play">播放</button>
+            <!-- 暂停按钮 -->
+            <button id="pause" disabled>暂停</button>
+        </div>
+        <!-- 波形图画布 -->
+        <canvas id="canvas" width="800" height="200"></canvas>
+    </div>
+
+    <script>
+        // 获取 HTML 元素
+        const audio = document.getElementById('audio');
+        const playButton = document.getElementById('play');
+        const pauseButton = document.getElementById('pause');
+        const canvas = document.getElementById('canvas');
+        const canvasCtx = canvas.getContext('2d');
+
+        // 创建 AudioContext
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        // 创建 AnalyserNode
+        const analyser = audioCtx.createAnalyser();
+
+        // 创建 MediaElementAudioSourceNode
+        const sourceNode = audioCtx.createMediaElementSource(audio);
+
+        // 将 AudioSourceNode 连接到 AnalyserNode
+        sourceNode.connect(analyser);
+        // 将 AnalyserNode 连接到 AudioContext 目的地
+        analyser.connect(audioCtx.destination);
+
+        // 设置 FFT 大小
+        analyser.fftSize = 2048;
+        // 分析数据的缓冲区长度
+        const bufferLength = analyser.frequencyBinCount;
+        // 创建数据数组来存储时域数据
+        const dataArray = new Uint8Array(bufferLength);
+
+        let drawIntervalId = null;
+        const drawInterval = 50; // 每50ms绘制一次波形图
+        const pointSpacing = 40; // 设置点的水平间隔
+
+        // 播放按钮点击事件
+        playButton.addEventListener('click', () => {
+            // 恢复 audioContext (HTML5 自动播放策略)
+            audioCtx.resume().then(() => {
+                audio.play(); // 播放音频
+                playButton.disabled = true; // 禁用播放按钮
+                pauseButton.disabled = false; // 启用暂停按钮
+                if (!drawIntervalId) {
+                    drawIntervalId = setInterval(draw, drawInterval);
+                }
+            });
+        });
+
+        // 暂停按钮点击事件
+        pauseButton.addEventListener('click', () => {
+            audio.pause(); // 暂停播放音频
+            playButton.disabled = false; // 启用播放按钮
+            pauseButton.disabled = true; // 禁用暂停按钮
+            if (drawIntervalId) {
+                clearInterval(drawIntervalId);
+                drawIntervalId = null;
+            }
+        });
+
+        // 绘制波形图函数
+        function draw() {
+            const WIDTH = canvas.width;
+            const HEIGHT = canvas.height;
+
+            // 获取时域数据
+            analyser.getByteTimeDomainData(dataArray);
+
+            // 保存当前画布状态
+            canvasCtx.save();
+
+            // 将当前画布内容左移一个像素宽的间隔
+            canvasCtx.drawImage(canvas, -pointSpacing, 0);
+
+            // 清除右侧的点
+            canvasCtx.clearRect(WIDTH - pointSpacing, 0, pointSpacing, HEIGHT);
+
+            // 设置波形图线条样式
+            canvasCtx.lineWidth = 2;
+            canvasCtx.strokeStyle = 'rgb(0, 255, 0)';
+
+            // 开始绘制路径
+            canvasCtx.beginPath();
+
+            const centerY = HEIGHT / 2;
+
+            // 仅绘制最新一个数据点
+            const v = dataArray[Math.floor(bufferLength / 2)] / 128.0; // 获取中间值
+            const y = v * HEIGHT / 2;
+
+            canvasCtx.moveTo(WIDTH - pointSpacing, centerY);
+            canvasCtx.lineTo(WIDTH - pointSpacing, centerY - y + centerY);
+
+            canvasCtx.stroke(); // 完成绘制
+
+            // 恢复画布状态
+            canvasCtx.restore();
+        }
+    </script>
+</body>
+</html>

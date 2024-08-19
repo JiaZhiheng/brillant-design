@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MutationObserver Demo</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        @keyframes blink {
+            0% { background-color: yellow; }
+            50% { background-color: inherit; }
+            100% { background-color: yellow; }
+        }
+        .highlight {
+            animation: blink 0.5s step-end 6; /* 闪烁 6 次, 每次 0.5 秒 */
+        }
+    </style>
+</head>
+<body>
+    <h1>MutationObserver Demo</h1>
+    <button onclick="changeTableData()">随机改变表格数据</button>
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>编号</th>
+                <th>数据</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>数据1</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>数据2</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>数据3</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        const table = document.getElementById('data-table');
+
+        // 初始化MutationObserver
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'characterData' || mutation.type === 'childList') {
+                    const targetNode = mutation.target.nodeType === Node.TEXT_NODE 
+                        ? mutation.target.parentElement 
+                        : mutation.target;
+                    
+                    targetNode.classList.add('highlight');
+                    setTimeout(() => {
+                        targetNode.classList.remove('highlight');
+                    }, 3000); // 持续三秒钟
+                }
+            });
+        });
+
+        // 观察表格的变化
+        const config = { childList: true, characterData: true, subtree: true };
+        observer.observe(table, config);
+
+        function getRandomData() {
+            return '数据' + Math.floor(Math.random() * 100);
+        }
+
+        function changeTableData() {
+            const rows = table.getElementsByTagName('tbody')[0].rows;
+            for (let row of rows) {
+                if (Math.random() > 0.5) { // 随机选择部分单元格进行更新
+                    const dataCell = row.cells[1];
+                    dataCell.textContent = getRandomData();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>音频可视化</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      height: 100vh;
+    }
+    canvas {
+      width: 800px;
+      height: 100px;
+      display: block;
+    }
+    audio {
+      display: block;
+      margin-top: 20px;
+      width: 400px;
+    }
+  </style>
+</head>
+<body>
+  <canvas></canvas>
+  <audio src="./music.mp4" controls></audio>
+  <script>
+    const audio = document.querySelector('audio');
+    const canvas = document.querySelector('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // 初始化 canvas 的尺寸
+    function initCvs() {
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+    }
+
+    initCvs();
+    window.addEventListener('resize', initCvs);
+
+    let isInit = false;
+    let dataArray, analyser;
+
+    audio.onplay = function() {
+      if (isInit) return;
+
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const audCtx = new AudioContext();
+      const source = audCtx.createMediaElementSource(audio);
+      analyser = audCtx.createAnalyser();
+      analyser.fftSize = 256; // 使用较小的 fftSize 提升性能
+      dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+      source.connect(analyser);
+      analyser.connect(audCtx.destination);
+
+      isInit = true;
+    };
+
+    function draw() {
+      requestAnimationFrame(draw);
+      const { width, height } = canvas;
+      ctx.clearRect(0, 0, width, height);
+
+      if (!isInit) return;
+
+      analyser.getByteFrequencyData(dataArray);
+      const barWidth = Math.ceil(width / dataArray.length);
+      ctx.fillStyle = '#78C5F7';
+      for (let i = 0; i < dataArray.length; i++) {
+        const barHeight = (dataArray[i] / 255) * height;
+        const y = height - barHeight;
+        ctx.fillRect(i * barWidth, y, barWidth - 1, barHeight);
+      }
+    }
+
+    draw();
+  </script>
+</body>
+</html>
