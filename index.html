@@ -8,18 +8,12 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       height: 100vh;
-    }
-
-    .directory {
-      width: 400px;
-      text-align: center;
+      background-color: #f8f9fa;
     }
 
     h1 {
+      text-align: center;
       margin-bottom: 20px;
     }
 
@@ -52,27 +46,124 @@
     .directory-cell a:hover {
       text-decoration: underline;
     }
+
+    .card-box {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(6, 1fr);
+    }
+
+    @media screen and (max-width: 1440px) {
+      .card-box {
+        grid-template-columns: repeat(5, 1fr);
+      }
+    }
+
+    @media screen and (max-width: 1280px) {
+      .card-box {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    @media screen and (max-width: 1024px) {
+      .card-box {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media screen and (max-width: 768px) {
+      .card-box {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media screen and (max-width: 576px) {
+      .card-box {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #fff;
+      position: relative;
+    }
+
+    .star::after {
+      content: '⭐';
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      color: #f8d7da;
+    }
+
+    .game::after {
+      content: '🎮';
+      position: absolute;
+      top: 4px;
+      right: 10px;
+      color: #c3e6cb;
+    }
+
+    .card a {
+      color: #007bff;
+      text-decoration: none;
+    }
   </style>
 </head>
 
 <body>
   <div class="directory">
     <h1>文件目录</h1>
-    <div class="directory-table">
-      <div class="directory-row">
-        <a class="directory-cell" href="./23-fullwebsite-design-agency/index.html">企业官网</a>
+    <div class="card-box">
+      <div class="card game">
+        <a href="./school-timetable/index.html" target="_blank">课程表</a>
       </div>
-      <div class="directory-row">
-        <a class="directory-cell" href="./GameDate-demo-master/main.html">游戏速报</a>
+      <div class="card game">
+        <a href="./greedy-snake/index.html" target="_blank">贪吃蛇</a>
       </div>
-      <div class="directory-row">
-        <a class="directory-cell" href="./job-search-platform-ui 2/dist/index.html">求职平台</a>
+      <div class="card game">
+        <a href="./2048/index.html" target="_blank">2048</a>
       </div>
-      <div class="directory-row">
-        <a class="directory-cell" href="./solar-system-explorer-in-css-only 2/dist/index.html">太空漫游</a>
+      <div class="card game">
+        <a href="./Gameboy Tetris Clone/index.html" target="_blank">俄罗斯方块</a>
       </div>
-      <div class="directory-row">
-        <a class="directory-cell" href="./school-timetable/index.html">课程表</a>
+      <div class="card game">
+        <a href="./spin-wheel/index.html" target="_blank">幸运转盘</a>
+      </div>
+      <div class="card game">
+        <a href="./pianogame-main/index.html" target="_blank">钢琴块</a>
+      </div>
+      <div class="card game">
+        <a href="./music-player/index.html" target="_blank">音频可视化</a>
+      </div>
+      <div class="card game">
+        <a href="./radial-menu/index.html" target="_blank">圆环菜单</a>
+      </div>
+      <div class="card game">
+        <a href="./Connect 4/index.html" target="_blank">四子连珠</a>
+      </div>
+      <div class="card game">
+        <a href="./tic-tac-toe-javascript/index.html" target="_blank">井字棋</a>
+      </div>
+      <div class="card">
+        <a href="./23-fullwebsite-design-agency/index.html" target="_blank">企业官网</a>
+      </div>
+      <div class="card">
+        <a href="./GameDate-demo-master/main.html" target="_blank">游戏速报</a>
+      </div>
+      <div class="card">
+        <a href="./job-search-platform-ui 2/dist/index.html" target="_blank">求职平台</a>
+      </div>
+      <div class="card">
+        <a href="./solar-system-explorer-in-css-only 2/dist/index.html" target="_blank">太空漫游</a>
       </div>
     </div>
   </div>
