@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="container A">
+    <svg class="typeRange" height="160" width="312" view-box="0 0 312 160">
+      <g class="scale" stroke="red"></g>
+      <path class="outline" d="" />
+      <path class="fill" d="" />
+      <path class="margin" d="" />
+    </svg>
+  </div>
+</body>
+<style>
+  .outline,
+  .fill,
+  .margin,
+  .scale {
+    pointer-events: none;
+  }
+
+  .outline {
+    fill: #E1E4EA;
+  }
+
+  .margin {
+    fill: #fff;
+  }
+
+  .fill {
+    fill: #FF8447;
+  }
+</style>
+<script>
+  var containersRy = document.querySelector(".container");
+  var svg = document.querySelector(".typeRange");
+  var output = document.querySelector(".output");
+  var margin = document.querySelector(".margin");
+  var outline = document.querySelector(".outline");
+  var fill = document.querySelector(".fill");
+
+  var rad = Math.PI / 180;
+  var NS = "http:\/\/www.w3.org/2000/svg";
+
+  var W = parseInt(window.getComputedStyle(svg, null).getPropertyValue("width"));
+  console.log(W)
+  var offset = 40;
+  var cx = ~~(W / 2);
+  console.log(cx)
+  var cy = 160;
+
+  var r1 = cx - offset;
+  var delta = ~~(r1 / 4);
+
+  var initVal = 30;
+
+  var x1 = cx + r1,
+    y1 = cy;
+  var r2 = r1 - delta;
+
+  var x2 = offset,
+    y2 = cy;
+  var x3 = x1 - delta,
+    y3 = cy;
+
+  function drawInput(cx, cy, r1, offset, delta, a) {
+
+    var d1 = getD1(cx, cy, r1, offset, delta);
+    var d2 = getD2(cx, cy, r1, offset, delta, a);
+    var d3 = getD3(cx, cy, r1, offset, delta, a);
+
+    outline.setAttributeNS(null, "d", d1);
+    fill.setAttributeNS(null, "d", d2);
+    margin.setAttributeNS(null, "d", d3);
+    console.log(d1, d2, d3);
+  }
+
+  function updateInput(p, cx, cy, r1, offset, delta) {
+
+    var x = p.x;
+    var y = p.y;
+    var lx = cx - x;
+    var ly = cy - y;
+
+    var angle = Math.atan2(ly, lx) / rad;
+    var a = angle - 180;
+    console.log(x, y, lx, ly, angle, a);
+    drawInput(cx, cy, r1, offset, delta, a);
+  }
+
+  function getD1(cx, cy, r1, offset, delta) {
+
+    var x1 = cx + r1,
+      y1 = cy;
+    var x2 = offset,
+      y2 = cy;
+    var r2 = r1 - delta;
+    var x3 = x1 - delta,
+      y3 = cy;
+
+    var d1 =
+      "M " + x1 + "," + y1 + " A" + r1 + "," + r1 + " 0 0 0 " + x2 + "," + y2 + " H" + (offset + delta) + " A" + r2 + "," + r2 + " 0 0 1 " + x3 + "," + y3 + " z";
+
+    return d1;
+  }
+
+  function getD2(cx, cy, r1, offset, delta, angle) {
+    var a = (angle - 1) * rad;
+    var r2 = r1 - delta;
+    var x4 = cx + r1 * Math.cos(a);
+    var y4 = cy + r1 * Math.sin(a);
+    var x5 = cx + r2 * Math.cos(a);
+    var y5 = cy + r2 * Math.sin(a);
+
+    var d2 =
+      "M " + x4 + "," + y4 + " A" + r1 + "," + r1 + " 0 0 0 " + x2 + "," + y2 + " H" + (offset + delta) + " A" + r2 + "," + r2 + " 0 0 1 " + x5 + "," + y5 + " z";
+
+    return d2;
+  }
+
+  function getD3(cx, cy, r1, offset, delta, angle) {
+    var a1 = (angle - 1) * rad;
+    var a2 = (angle + 1) * rad;
+    var r2 = r1 - delta;
+    var x4 = cx + r1 * Math.cos(a1);
+    var y4 = cy + r1 * Math.sin(a1);
+    var x5 = cx + r2 * Math.cos(a1);
+    var y5 = cy + r2 * Math.sin(a1);
+    var x6 = cx + r1 * Math.cos(a2);
+    var y6 = cy + r1 * Math.sin(a2);
+    var x7 = cx + r2 * Math.cos(a2);
+    var y7 = cy + r2 * Math.sin(a2);
+
+    var d3 =
+      "M " + x6 + "," + y6 + " A" + r1 + "," + r1 + " 0 0 0 " + x4 + "," + y4 + " L " + x5 + "," + y5 + " A" + r2 + "," + r2 + " 0 0 1 " + x7 + "," + y7 + " z";
+
+    return d3;
+  }
+
+  // events
+  window.addEventListener("load", function () {
+    var pa = (initVal * 1.8) - 180;
+    var p = {}
+    p.x = cx + r1 * Math.cos(pa * rad);
+    p.y = cy + r1 * Math.sin(pa * rad);
+    updateInput(p, cx, cy, r1, offset, delta)
+  }, false);
+</script>
+
+</html>
