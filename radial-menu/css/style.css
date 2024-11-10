@@ -1,0 +1,85 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #222327;
+}
+
+.menu {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu .toggle {
+  position: absolute;
+  width: 55px;
+  height: 55px;
+  color: #0f0;
+  border: 2px solid #0f0;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3em;
+  cursor: pointer;
+  transition: 0.5s;
+}
+
+.menu .toggle.active {
+  transform: rotate(315deg);
+  background-color: #0f0;
+  color: #222327;
+}
+
+.menu li {
+  position: absolute;
+  left: 10px;
+  list-style: none;
+  transform-origin: 140px;
+  border: 2px solid #0f0;
+  border-radius: 50%;
+  transform: rotate(calc(360deg / 8 * var(--i))) translateX(40px);
+  z-index: 10;
+  pointer-events: none;
+  scale: 0;
+  transition: 0.5s;
+  transition-delay: calc(0.1s * var(--i));
+}
+
+
+.menu.active li {
+  scale: 1;
+  pointer-events: initial;
+}
+
+.menu li a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 45px;
+  height: 45px;
+  font-size: 1.5em;
+  color: #0f0;
+  transition: 0.5s;
+  border-radius: 50%;
+  transform: rotate(calc(-360deg / 8 * var(--i)));
+}
+
+.menu li.active a {
+  background-color: #0f0;
+  color: #222327;
+}
+
+
+
