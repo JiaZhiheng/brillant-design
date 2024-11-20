@@ -129,6 +129,10 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < newLine.length - 1; i++) {
             if (newLine[i] === newLine[i + 1]) {
                 newLine[i] *= 2;
+                if (newLine[i] === 2048) {
+                    // If 2048 is reached, game is won
+                    alert('Congratulations! You have won the game!');
+                }
                 updateScore(newLine[i]); // Update score when tiles merged
                 newLine.splice(i + 1, 1);
             }
