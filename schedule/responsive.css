@@ -1,0 +1,73 @@
+/* 通用相对单位优化 */
+.info {
+  gap: 4rem;
+}
+
+.context {
+  padding: 0.625rem;
+  min-height: 10rem;
+}
+
+.card {
+  padding: 0.625rem;
+  gap: 0.625rem;
+}
+
+.control {
+  padding: 0.625rem;
+  gap: 0.625rem;
+}
+
+.item {
+  height: 2.5rem;
+  line-height: 2.5rem;
+}
+
+/* 响应式布局 — 视口宽度 < 768px */
+@media (max-width: 767px) {
+  .container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .content {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .sidebar {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .context {
+    width: 100%;
+  }
+
+  .card {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(5rem, 1fr));
+    gap: 0.5rem;
+  }
+
+  .control {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .control .button {
+    width: 100%;
+  }
+
+  .info {
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  h1 {
+    font-size: 1.25rem;
+  }
+}

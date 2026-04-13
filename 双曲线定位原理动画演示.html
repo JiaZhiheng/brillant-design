@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双曲线定位原理动画演示</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+
+        #container {
+            width: 100%;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        #header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        #infoPanel {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        canvas {
+            border: 1px solid #ddd;
+            background-color: white;
+            display: block;
+            margin: 0 auto;
+            cursor: pointer;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-crisp-edges;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        #controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 200px;
+        }
+
+        .control-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #34495e;
+        }
+
+        .control-group input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            width: 100px;
+            height: 60px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        #progress-container {
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        #progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #progress-fill {
+            height: 100%;
+            background-color: #3498db;
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        #progress-slider {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        #explanation {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #2ecc71;
+            margin-top: 20px;
+        }
+
+        #explanation h3 {
+            color: #27ae60;
+            margin-top: 0;
+        }
+
+        .highlight {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .formula {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+
+        .note {
+            background-color: #fffde7;
+            padding: 10px;
+            border-left: 3px solid #ffc107;
+            margin: 10px 0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .button-group button {
+            flex: 1;
+        }
+
+        #play-btn {
+            background-color: #2ecc71;
+        }
+
+        #play-btn:hover {
+            background-color: #27ae60;
+        }
+
+        #pause-btn {
+            background-color: #e67e22;
+        }
+
+        #pause-btn:hover {
+            background-color: #d35400;
+        }
+
+        #reset-btn {
+            background-color: #e74c3c;
+        }
+
+        #reset-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        #explosion-point {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: orange;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            z-index: 10;
+        }
+        
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 165, 0, 0.7);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        .time-info {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 5px 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            z-index: 15;
+            display: none;
+            animation: popup 0.3s ease-out;
+        }
+        
+        @keyframes popup {
+            0% { transform: scale(0.8); opacity: 0; }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div id="header">
+            <h1>双曲线定位原理动画演示</h1>
+            <p>已知A、B两点相距，声波传播速度，以及时间差，求爆炸点轨迹</p>
+        </div>
+
+        <div class="infoContainer" style="display: flex; gap: 20px; position: relative;">
+            <div class="left-section">
+                <div style="position: relative;">
+                    <canvas id="animationCanvas" width="1000" height="500"></canvas>
+                    <div id="explosion-point"></div>
+                    <div id="time-info-b" class="time-info"></div>
+                    <div id="time-info-a" class="time-info"></div>
+                </div>
+
+                <div id="controls">
+                    <div class="control-group">
+                        <label for="distanceInput">AB距离 (米):</label>
+                        <input type="number" id="distanceInput" min="100" max="2000" value="800">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="timeDiffInput">时间差 (秒):</label>
+                        <input type="number" id="timeDiffInput" min="0.1" max="10" step="0.1" value="2">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="speedInput">声速 (米/秒):</label>
+                        <input type="number" id="speedInput" min="100" max="1000" value="340">
+                    </div>
+
+                    <div class="button-group">
+                        <button id="play-btn">▶ 播放</button>
+                        <button id="pause-btn">⏸ 暂停</button>
+                        <button id="reset-btn">↺ 重置</button>
+                    </div>
+                </div>
+
+                <div id="progress-container">
+                    <div id="progress-bar">
+                        <div id="progress-fill"></div>
+                    </div>
+                    <input type="range" id="progress-slider" min="0" max="100" value="0" step="1">
+                </div>
+                <div id="infoPanel">
+                    <p>当前时间: <span id="currentTime">0.0</span> 秒 | 声程差: <span id="distanceDiff">0</span>米</p>
+                    <p>双曲线参数: a = <span id="paramA">340</span>米, b = <span id="paramB">212.1</span>米</p>
+                </div>
+            </div>
+            <div class="right-section">
+                <div id="explanation">
+                    <h3>双曲线定位原理说明</h3>
+                    <p>当声波从爆炸点P传播到两个观测点A和B的时间差为Δt时，声程差为：</p>
+                    <p class="formula">|PA| - |PB| = v × Δt</p>
+                    <p>满足此条件的点P的集合构成一条<b>双曲线</b>，其中：</p>
+                    <ul>
+                        <li>A和B是双曲线的两个焦点</li>
+                        <li>实半轴 a = (v × Δt) / 2</li>
+                        <li>半焦距 c = AB距离 / 2</li>
+                        <li>虚半轴 b = √(c² - a²)</li>
+                    </ul>
+                    <p class="note">动画中绿色曲线表示所有可能的爆炸点位置。使用控制面板可以调整参数并观察双曲线的变化。</p>
+                    <h3>动画说明</h3>
+                    <p>动画展示了声波从爆炸点传播到A、B两点的过程：</p>
+                    <ol>
+                        <li>B点首先接收到声波（蓝色圆圈）</li>
+                        <li>2秒后A点接收到声波（红色圆圈）</li>
+                        <li>声程差恒为680米（340m/s × 2s）</li>
+                        <li>满足声程差条件的点构成双曲线轨迹（绿色曲线）</li>
+                    </ol>
+                    
+                    <h3>操作指南</h3>
+                    <ul>
+                        <li>使用播放/暂停按钮控制动画</li>
+                        <li>使用滑块调整动画进度</li>
+                        <li>修改参数可观察不同场景下的双曲线</li>
+                        <li>点击重置按钮重新开始动画</li>
+                        <li>点击双曲线上任意位置模拟爆炸点</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const canvas = document.getElementById('animationCanvas');
+        const ctx = canvas.getContext('2d');
+        const currentTimeElement = document.getElementById('currentTime');
+        const distanceDiffElement = document.getElementById('distanceDiff');
+        const paramAElement = document.getElementById('paramA');
+        const paramBElement = document.getElementById('paramB');
+        const distanceInput = document.getElementById('distanceInput');
+        const timeDiffInput = document.getElementById('timeDiffInput');
+        const speedInput = document.getElementById('speedInput');
+        const playBtn = document.getElementById('play-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const progressFill = document.getElementById('progress-fill');
+        const progressSlider = document.getElementById('progress-slider');
+        const explosionPointElement = document.getElementById('explosion-point');
+        const timeInfoB = document.getElementById('time-info-b');
+        const timeInfoA = document.getElementById('time-info-a');
+
+        // 动画状态
+        let startTime = null;
+        let lastTimestamp = null;
+        let animationFrameId = null;
+        let isPlaying = false;
+        let currentTime = 0;
+        let maxTime = 10; // 最大动画时间（秒）
+        let upperTrajectoryPoints = []; // 上半支轨迹点
+        let lowerTrajectoryPoints = []; // 下半支轨迹点
+        let selectedPoint = null;
+        let explosionPoint = null; // 爆炸点坐标
+        let explosionTime = 0; // 爆炸发生的时间
+        let ripples = []; // 涟漪效果数组
+        let explosionAnimationActive = false; // 爆炸动画是否激活
+        let timeInfoShownB = false; // B点时间信息是否已显示
+        let timeInfoShownA = false; // A点时间信息是否已显示
+        let explosionWaveRadius = 0; // 爆炸声波半径
+        let explosionWaveAnimationId = null; // 爆炸声波动画ID
+
+        // 物理参数（初始值）
+        let soundSpeed = 340;
+        let timeDifference = 2;
+        let distanceAB = 800;
+        let distanceDifference = soundSpeed * timeDifference;
+        let a = distanceDifference / 2;
+        let c = distanceAB / 2;
+        let b = Math.sqrt(c * c - a * a);
+
+        // 比例尺
+        const scale = 0.5;
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+
+        // A、B点坐标
+        let pointA = { x: centerX - (distanceAB / 2) * scale, y: centerY };
+        let pointB = { x: centerX + (distanceAB / 2) * scale, y: centerY };
+
+        // 更新参数显示
+        function updateParamDisplay() {
+            distanceDiffElement.textContent = distanceDifference.toFixed(1);
+            paramAElement.textContent = a.toFixed(1);
+            paramBElement.textContent = b.toFixed(1);
+        }
+
+        // 绘制坐标系和AB连线（立即显示）
+        function drawCoordinateSystem() {
+            // 绘制坐标系网格
+            ctx.strokeStyle = '#f0f0f0';
+            ctx.lineWidth = 1;
+
+            // 水平网格线
+            for (let y = 0; y <= canvas.height; y += 50) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            // 垂直网格线
+            for (let x = 0; x <= canvas.width; x += 50) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+
+            // 绘制坐标轴
+            ctx.strokeStyle = '#999';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, centerY);
+            ctx.lineTo(canvas.width, centerY);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, 0);
+            ctx.lineTo(centerX, canvas.height);
+            ctx.stroke();
+
+            // 绘制AB连线（实线） - 立即显示
+            ctx.strokeStyle = '#aaa';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(pointA.x, pointA.y);
+            ctx.lineTo(pointB.x, pointB.y);
+            ctx.stroke();
+
+            // 标注AB距离
+            ctx.fillStyle = '#666';
+            ctx.font = 'bold 16px Arial';
+            ctx.fillText(distanceAB + '米', centerX - 20, centerY - 10);
+        }
+
+        // 绘制A、B点
+        function drawPoints() {
+            // 绘制A点
+            ctx.fillStyle = 'red';
+            ctx.beginPath();
+            ctx.arc(pointA.x, pointA.y, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'black';
+            ctx.font = 'bold 16px Arial';
+            ctx.fillText('A (晚听到)', pointA.x - 40, pointA.y - 20);
+
+            // 绘制B点
+            ctx.fillStyle = 'blue';
+            ctx.beginPath();
+            ctx.arc(pointB.x, pointB.y, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'black';
+            ctx.font = 'bold 16px Arial';
+            ctx.fillText('B (早听到)', pointB.x - 40, pointB.y - 20);
+        }
+
+        // 绘制声波圆圈
+        function drawWaveFronts() {
+            // B点的波 (从0秒开始)
+            const radiusB = Math.max(0, currentTime * soundSpeed * scale);
+            if (radiusB > 0) {
+                ctx.strokeStyle = 'rgba(0, 100, 255, 0.5)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(pointB.x, pointB.y, radiusB, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // A点的波 (延迟开始)
+            if (currentTime > timeDifference) {
+                const radiusA = (currentTime - timeDifference) * soundSpeed * scale;
+                ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(pointA.x, pointA.y, radiusA, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+        }
+
+        // 绘制爆炸点与AB点的连线
+        function drawExplosionLines() {
+            if (explosionPoint) {
+                // 绘制到A点的连线
+                ctx.strokeStyle = 'rgba(255, 0, 0, 0.7)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(explosionPoint.x, explosionPoint.y);
+                ctx.lineTo(pointA.x, pointA.y);
+                ctx.stroke();
+
+                // 绘制到B点的连线
+                ctx.strokeStyle = 'rgba(0, 100, 255, 0.7)';
+                ctx.beginPath();
+                ctx.moveTo(explosionPoint.x, explosionPoint.y);
+                ctx.lineTo(pointB.x, pointB.y);
+                ctx.stroke();
+            }
+        }
+
+        // 绘制当前轨迹点与AB点的连线
+        function drawCurrentPointLines() {
+            if (selectedPoint) {
+                // 绘制到A点的连线
+                ctx.strokeStyle = 'rgba(255, 0, 0, 0.7)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(pointA.x, pointA.y);
+                ctx.lineTo(selectedPoint.x, selectedPoint.y);
+                ctx.stroke();
+
+                // 绘制到B点的连线
+                ctx.strokeStyle = 'rgba(0, 100, 255, 0.7)';
+                ctx.beginPath();
+                ctx.moveTo(pointB.x, pointB.y);
+                ctx.lineTo(selectedPoint.x, selectedPoint.y);
+                ctx.stroke();
+            }
+        }
+
+        // 绘制爆炸声波
+        function drawExplosionWave() {
+            if (explosionAnimationActive && explosionPoint) {
+                ctx.strokeStyle = 'rgba(255, 165, 0, 0.7)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(explosionPoint.x, explosionPoint.y, explosionWaveRadius, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+        }
+
+        // 绘制双曲线轨迹点
+        function drawTrajectoryPoints() {
+            // 绘制上半支
+            if (upperTrajectoryPoints.length > 0) {
+                ctx.strokeStyle = 'green';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(upperTrajectoryPoints[0].x, upperTrajectoryPoints[0].y);
+                
+                for (let i = 1; i < upperTrajectoryPoints.length; i++) {
+                    ctx.lineTo(upperTrajectoryPoints[i].x, upperTrajectoryPoints[i].y);
+                }
+                ctx.stroke();
+            }
+
+            // 绘制下半支
+            if (lowerTrajectoryPoints.length > 0) {
+                ctx.strokeStyle = 'green';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(lowerTrajectoryPoints[0].x, lowerTrajectoryPoints[0].y);
+                
+                for (let i = 1; i < lowerTrajectoryPoints.length; i++) {
+                    ctx.lineTo(lowerTrajectoryPoints[i].x, lowerTrajectoryPoints[i].y);
+                }
+                ctx.stroke();
+            }
+        }
+
+        // 添加轨迹点（包括上下两支）
+        function addTrajectoryPoint() {
+            if (currentTime > timeDifference) {
+                // 双曲线参数方程: x = a * cosh(t), y = b * sinh(t)
+                // 使用当前时间作为参数t的参考
+                const t = (currentTime - timeDifference) * 0.3;
+
+                // 计算双曲线上的点 (以AB中点为原点)
+                const x = a * Math.cosh(t);
+                const y = b * Math.sinh(t);
+
+                // 转换到画布坐标系 (右支上半支)
+                const plotX = centerX + x * scale;
+                const plotY = centerY - y * scale;
+
+                // 下半支点
+                const plotYLower = 2 * centerY - plotY;
+
+                // 添加到轨迹点数组
+                upperTrajectoryPoints.push({ x: plotX, y: plotY });
+                lowerTrajectoryPoints.push({ x: plotX, y: plotYLower });
+
+                // 设置选中的点（用于距离标注）
+                selectedPoint = { x: plotX, y: plotY };
+            }
+        }
+
+        // 绘制距离标注（立即显示）
+        function drawDistanceAnnotations() {
+            if (selectedPoint) {
+                // 计算实际距离
+                const dxA = (selectedPoint.x - pointA.x) / scale;
+                const dyA = (selectedPoint.y - pointA.y) / scale;
+                const distA = Math.sqrt(dxA * dxA + dyA * dyA);
+
+                const dxB = (selectedPoint.x - pointB.x) / scale;
+                const dyB = (selectedPoint.y - pointB.y) / scale;
+                const distB = Math.sqrt(dxB * dxB + dyB * dyB);
+
+                // 显示距离差
+                const diff = Math.abs(distA - distB).toFixed(1);
+
+                // 标注距离
+                ctx.fillStyle = 'black';
+                ctx.font = 'bold 16px Arial';
+                ctx.fillText(`|PA| = ${distA.toFixed(1)}米`, selectedPoint.x - 60, selectedPoint.y - 20);
+                ctx.fillText(`|PB| = ${distB.toFixed(1)}米`, selectedPoint.x - 60, selectedPoint.y + 10);
+                ctx.fillStyle = 'green';
+                ctx.font = 'bold 16px Arial';
+                ctx.fillText(`|PA| - |PB| = ${diff}米 ≈ ${distanceDifference}米`, selectedPoint.x - 80, selectedPoint.y - 40);
+            }
+        }
+
+        // 更新参数
+        function updateParameters() {
+            distanceAB = parseFloat(distanceInput.value);
+            timeDifference = parseFloat(timeDiffInput.value);
+            soundSpeed = parseFloat(speedInput.value);
+
+            distanceDifference = soundSpeed * timeDifference;
+            a = distanceDifference / 2;
+            c = distanceAB / 2;
+            b = Math.sqrt(c * c - a * a);
+
+            pointA = { x: centerX - (distanceAB / 2) * scale, y: centerY };
+            pointB = { x: centerX + (distanceAB / 2) * scale, y: centerY };
+
+            updateParamDisplay();
+        }
+
+        // 重置动画
+        function resetAnimation() {
+            // 取消动画帧请求
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            
+            if (explosionWaveAnimationId) {
+                cancelAnimationFrame(explosionWaveAnimationId);
+                explosionWaveAnimationId = null;
+            }
+
+            currentTime = 0;
+            upperTrajectoryPoints = [];
+            lowerTrajectoryPoints = [];
+            selectedPoint = null;
+            explosionPoint = null;
+            explosionPointElement.style.display = 'none';
+            explosionAnimationActive = false;
+            ripples = [];
+            timeInfoB.style.display = 'none';
+            timeInfoA.style.display = 'none';
+            timeInfoShownB = false;
+            timeInfoShownA = false;
+            explosionWaveRadius = 0;
+            currentTimeElement.textContent = currentTime.toFixed(1);
+            progressFill.style.width = '0%';
+            progressSlider.value = 0;
+            drawScene();
+        }
+
+        // 绘制整个场景
+        function drawScene() {
+            // 清除画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 1. 绘制坐标系和AB连线（立即显示）
+            drawCoordinateSystem();
+
+            // 2. 绘制A、B点
+            drawPoints();
+
+            // 3. 绘制声波前沿
+            drawWaveFronts();
+
+            // 4. 绘制爆炸声波
+            drawExplosionWave();
+
+            // 5. 绘制爆炸点与AB点的连线
+            drawExplosionLines();
+
+            // 6. 绘制轨迹点
+            drawTrajectoryPoints();
+
+            // 7. 绘制当前轨迹点与AB点的连线（在动画播放时始终显示）
+            drawCurrentPointLines();
+
+            // 8. 当双曲线开始绘制时，显示距离标注
+            if (currentTime > timeDifference && upperTrajectoryPoints.length > 0) {
+                drawDistanceAnnotations();
+            }
+
+            // 9. 显示声程差
+            ctx.fillStyle = 'black';
+            ctx.font = 'bold 16px Arial';
+            ctx.fillText(`声程差: ${distanceDifference}米`, 20, 30);
+
+            // 10. 显示双曲线参数
+            ctx.fillText(`双曲线参数: a=${a.toFixed(1)}米, b=${b.toFixed(1)}米`, 20, 60);
+        }
+
+        // 创建涟漪效果（只画一次）
+        function createRipple(x, y) {
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple';
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+            ripple.style.width = '0px';
+            ripple.style.height = '0px';
+            ripple.style.opacity = '1';
+            document.querySelector('.infoContainer').appendChild(ripple);
+            
+            // 动画效果
+            let size = 0;
+            const maxSize = Math.max(canvas.width, canvas.height) * 1.5;
+            const speed = soundSpeed * scale * 0.05;
+            
+            function animateRipple() {
+                size += speed;
+                ripple.style.width = `${size}px`;
+                ripple.style.height = `${size}px`;
+                ripple.style.opacity = `${1 - size / maxSize}`;
+                
+                if (size < maxSize) {
+                    requestAnimationFrame(animateRipple);
+                } else {
+                    ripple.remove();
+                }
+            }
+            
+            animateRipple();
+            return ripple;
+        }
+
+        // 显示时间信息
+        function showTimeInfo(point, time, isB) {
+            const timeInfo = isB ? timeInfoB : timeInfoA;
+            timeInfo.innerHTML = `爆炸后 ${time.toFixed(2)} 秒听到`;
+            timeInfo.style.display = 'block';
+            timeInfo.style.left = `${point.x - 50}px`;
+            timeInfo.style.top = `${point.y - 30}px`;
+            
+            // 3秒后隐藏
+            setTimeout(() => {
+                timeInfo.style.display = 'none';
+            }, 3000);
+        }
+
+        // 爆炸声波动画
+        function animateExplosionWave(timestamp) {
+            if (!explosionAnimationActive) return;
+            
+            // 更新声波半径
+            explosionWaveRadius += soundSpeed * scale * 0.05;
+            
+            // 检查是否到达B点
+            if (!timeInfoShownB && explosionPoint) {
+                const dxB = explosionPoint.x - pointB.x;
+                const dyB = explosionPoint.y - pointB.y;
+                const distanceToB = Math.sqrt(dxB * dxB + dyB * dyB);
+                
+                if (explosionWaveRadius >= distanceToB) {
+                    const timeToB = distanceToB / (soundSpeed * scale);
+                    showTimeInfo(pointB, timeToB, true);
+                    timeInfoShownB = true;
+                }
+            }
+            
+            // 检查是否到达A点
+            if (!timeInfoShownA && explosionPoint) {
+                const dxA = explosionPoint.x - pointA.x;
+                const dyA = explosionPoint.y - pointA.y;
+                const distanceToA = Math.sqrt(dxA * dxA + dyA * dyA);
+                
+                if (explosionWaveRadius >= distanceToA) {
+                    const timeToA = distanceToA / (soundSpeed * scale);
+                    showTimeInfo(pointA, timeToA, false);
+                    timeInfoShownA = true;
+                }
+            }
+            
+            // 重绘场景
+            drawScene();
+            
+            // 如果声波已经传播到足够远，停止动画
+            if (explosionWaveRadius < Math.max(canvas.width, canvas.height) * 1.5) {
+                explosionWaveAnimationId = requestAnimationFrame(animateExplosionWave);
+            } else {
+                explosionAnimationActive = false;
+            }
+        }
+
+        // 处理画布点击事件
+        function handleCanvasClick(event) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            // 检查点击是否在双曲线上
+            let closestPoint = null;
+            let minDistance = Infinity;
+            
+            // 检查上半支
+            for (const point of upperTrajectoryPoints) {
+                const distance = Math.sqrt(Math.pow(point.x - x, 2) + Math.pow(point.y - y, 2));
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestPoint = point;
+                }
+            }
+            
+            // 检查下半支
+            for (const point of lowerTrajectoryPoints) {
+                const distance = Math.sqrt(Math.pow(point.x - x, 2) + Math.pow(point.y - y, 2));
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestPoint = point;
+                }
+            }
+            
+            // 如果点击点在双曲线附近（20像素内）
+            if (minDistance < 20 && closestPoint) {
+                explosionPoint = closestPoint;
+                explosionPointElement.style.left = `${closestPoint.x}px`;
+                explosionPointElement.style.top = `${closestPoint.y}px`;
+                explosionPointElement.style.display = 'block';
+                
+                // 设置爆炸时间
+                explosionTime = currentTime;
+                explosionAnimationActive = true;
+                timeInfoShownB = false;
+                timeInfoShownA = false;
+                explosionWaveRadius = 0;
+                
+                // 清除现有涟漪（确保只画一次）
+                ripples.forEach(ripple => ripple.remove());
+                ripples = [];
+                
+                // 创建新的涟漪（只画一次）
+                ripples.push(createRipple(closestPoint.x, closestPoint.y));
+                
+                // 启动爆炸声波动画
+                if (explosionWaveAnimationId) {
+                    cancelAnimationFrame(explosionWaveAnimationId);
+                }
+                explosionWaveAnimationId = requestAnimationFrame(animateExplosionWave);
+                
+                // 立即重绘场景以显示连线
+                drawScene();
+            }
+        }
+
+        // 动画主循环
+        function animate(timestamp) {
+            if (!startTime) startTime = timestamp;
+            if (!lastTimestamp) lastTimestamp = timestamp;
+
+            const deltaTime = (timestamp - lastTimestamp) / 1000;
+            lastTimestamp = timestamp;
+
+            if (isPlaying) {
+                currentTime += deltaTime;
+
+                // 更新进度条
+                const progress = (currentTime / maxTime) * 100;
+                progressFill.style.width = `${Math.min(100, progress)}%`;
+                progressSlider.value = Math.min(100, progress);
+
+                currentTimeElement.textContent = currentTime.toFixed(1);
+
+                // 添加轨迹点
+                addTrajectoryPoint();
+
+                // 绘制场景
+                drawScene();
+
+                // 检查是否达到最大时间
+                if (currentTime < maxTime) {
+                    animationFrameId = requestAnimationFrame(animate);
+                } else {
+                    isPlaying = false;
+                    playBtn.disabled = false;
+                    pauseBtn.disabled = true;
+                }
+            }
+        }
+
+        // 事件监听器
+        playBtn.addEventListener('click', function () {
+            if (!isPlaying) {
+                isPlaying = true;
+                playBtn.disabled = true;
+                pauseBtn.disabled = false;
+
+                if (currentTime >= maxTime) {
+                    resetAnimation();
+                }
+
+                // 启动动画循环
+                lastTimestamp = null;
+                animationFrameId = requestAnimationFrame(animate);
+            }
+        });
+
+        pauseBtn.addEventListener('click', function () {
+            if (isPlaying) {
+                isPlaying = false;
+                playBtn.disabled = false;
+                pauseBtn.disabled = true;
+
+                // 取消动画帧请求
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
+                }
+            }
+        });
+
+        resetBtn.addEventListener('click', function () {
+            resetAnimation();
+            isPlaying = false;
+            playBtn.disabled = false;
+            pauseBtn.disabled = true;
+        });
+
+        // 参数变化时更新
+        distanceInput.addEventListener('change', function () {
+            updateParameters();
+            resetAnimation();
+        });
+
+        timeDiffInput.addEventListener('change', function () {
+            updateParameters();
+            resetAnimation();
+        });
+
+        speedInput.addEventListener('change', function () {
+            updateParameters();
+            resetAnimation();
+        });
+
+        // 进度条滑块控制
+        progressSlider.addEventListener('input', function () {
+            const percentage = parseInt(this.value);
+            currentTime = (percentage / 100) * maxTime;
+            progressFill.style.width = `${percentage}%`;
+            currentTimeElement.textContent = currentTime.toFixed(1);
+
+            // 重新计算轨迹点
+            upperTrajectoryPoints = [];
+            lowerTrajectoryPoints = [];
+            
+            // 使用更密集的点来绘制连续的双曲线
+            for (let t = 0; t <= currentTime; t += 0.05) {
+                const tempTime = t;
+                if (tempTime > timeDifference) {
+                    const tParam = (tempTime - timeDifference) * 0.3;
+                    const x = a * Math.cosh(tParam);
+                    const y = b * Math.sinh(tParam);
+                    const plotX = centerX + x * scale;
+                    const plotY = centerY - y * scale;
+                    const plotYLower = 2 * centerY - plotY;
+                    upperTrajectoryPoints.push({ x: plotX, y: plotY });
+                    lowerTrajectoryPoints.push({ x: plotX, y: plotYLower });
+                }
+            }
+
+            // 设置选中的点（用于距离标注）
+            if (upperTrajectoryPoints.length > 0) {
+                selectedPoint = upperTrajectoryPoints[upperTrajectoryPoints.length - 1];
+            }
+
+            drawScene();
+        });
+
+        // 添加画布点击事件
+        canvas.addEventListener('click', handleCanvasClick);
+
+        // 初始化
+        function init() {
+            updateParamDisplay();
+            drawScene();
+        }
+
+        // 页面加载后初始化
+        window.onload = init;
+
+        // 页面卸载时清理
+        window.addEventListener('beforeunload', function () {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            if (explosionWaveAnimationId) {
+                cancelAnimationFrame(explosionWaveAnimationId);
+            }
+        });
+    </script>
+</body>
+
+</html>

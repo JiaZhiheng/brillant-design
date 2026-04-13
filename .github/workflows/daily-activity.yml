@@ -1,0 +1,38 @@
+name: Daily GitHub Activity
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # 每天 UTC 2:00 运行（可以根据需要调整时间）
+  workflow_dispatch:      # 允许手动触发
+
+jobs:
+  create-activity:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0    # 获取完整的git历史
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    
+    - name: Configure Git
+      run: |
+        git config --global user.name "${{ secrets.GIT_USERNAME }}"
+        git config --global user.email "${{ secrets.GIT_EMAIL }}"
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run activity bot
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        REPO_NAME: ${{ github.repository }}
+      run: |
+        python github_activity_bot.py 

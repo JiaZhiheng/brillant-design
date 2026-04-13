@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (available.length > 0) {
             const randomCell = available[Math.floor(Math.random() * available.length)];
-            board[randomCell.x][randomCell.y] = Math.random() < 0.9 ? 2 : 4;
+            board[randomCell.x][randomCell.y] = Math.random() < 0.9 ? 1024 : 1024;
             const cell = document.querySelector(`[data-row="${randomCell.x}"][data-col="${randomCell.y}"]`);
             cell.classList.add('new-tile'); // Animation for new tiles
         }
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 newLine[i] *= 2;
                 if (newLine[i] === 2048) {
                     // If 2048 is reached, game is won
-                    alert('Congratulations! You have won the game!');
+                    // alert('Congratulations! You have won the game!');
                 }
                 updateScore(newLine[i]); // Update score when tiles merged
                 newLine.splice(i + 1, 1);

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZhuoZhuo</title>
+</head>
+
+<body>
+  <script>
+    // 下列常量不可修改
+    const testStr = '感谢您参与ZhuoZhuoWeb招聘🎉🎉';
+    const imageFileName = 'test.png';
+    const encodeType1 = 'type1';
+    const encodeType2 = 'type2';
+
+    // 相关参考链接
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String#utf-16_characters_unicode_code_points_and_grapheme_clusters
+    // https://developer.mozilla.org/en-US/docs/Web/API/ImageData
+    // https://en.wikipedia.org/wiki/Alpha_compositing
+
+    /**
+     * 解题思路
+     * 
+     * testStr 是一个由 「汉字字符(5)」+「英文字符(11)」+「汉字字符(2)」+「表情符号(2)」 组成的字符串、长度为 20。
+     * 由于 Uint8ClampedArray 的存在、所有字符的 unicode 编码都需要由 「若干个8位二进制数」 保存。
+     * 其中汉字最少由 2 个 「8位二进制数」 保存
+     * 英文字符最少由 1 个 「8位二进制数」 保存
+     * 表情符号最少由 3 个 「8位二进制数」 保存
+     * 
+     * 由于 pixArray2 的长度为 80
+     * 那么意味着每一个字符都可以占用 4 个单元长度
+     * 所有的字符都可以由统一的规则进行保存
+     * 再由统一的规则进行解码
+     * 
+     * 而 pixArray1 的长度仅有 56
+     * 并且由于 pixToData 方法的存在、实际能够存储数据的单元长度仅有 42
+     * 也就是说需要满足 type1 编码规则需要满足下列要求
+     *     5x + 11y + 2x + 2z <= 42
+     *     x >= 2
+     *     y >= 1
+     *     z >= 3
+     *     其中x、y、z分别为汉字字符、英文字符、表情符号需要占用的单元长度
+     * 所以我选择了下面的编码格式
+     * 「中文解码规则(1)」 + 「中文字符(5*3)」 + 「英文解码规则(1)」 + 「英文字符(11*1)」 + 「中文解码规则(1)」 + 「中文字符(2*3)」 + 「表情符号解码规则(1)」 + 「表情符号(2*3)」 = 42
+     * 为了和编码的数据进行区分我把「解码规则」用「负数」来存储
+     * 在解码过程中、当遍历到编码规则时就更新新的编码规则、再用新的编码规则处理后续的字符
+     * 
+     * 由于最终的答案需要生成并下载图片
+     * 所以我将数组的 4 的倍数的项用 255 来填充
+     * 保证在 RGBA 格式下能够生成有内容的图片(用0填充的话图片为透明)
+     * 
+     * 灵感来源
+     *    LeetCode 压缩字符串
+     *    JavaScript 1kb代码挑战
+     *    计算机文件压缩原理
+     * 
+     * PS: 不知道我对题目的理解是否准确、如果回答的有什么不足之处欢迎致电 15199975677、恳请面试官答疑解惑。
+     */
+
+    class ImageHandler {
+      constructor(encodeType) {
+        this.encodeType = encodeType;
+      }
+      #pixToData(arr) {
+        const list = [];
+        for (let i = 0; i < arr.length; i += 4) {
+          list.push(arr[i], arr[i + 1], arr[i + 2]);
+        }
+        return list;
+      }
+      downloadImage({ fileName, data, width, height }) {
+        const uintList = new Uint8ClampedArray(data);
+        const imgData = new ImageData(uintList, width, height);
+        // 补全代码：利用imgData，生成fileName文件，并下载
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.putImageData(imgData, 0, 0);
+        const url = canvas.toDataURL();
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+      getImageArrayByString(str) {
+        if (this.encodeType === encodeType1) {
+          // 补全代码：按照type1类型编码，生成像素数组，数组格式需要支持使用downloadImage函数生成对应图片
+
+          /**
+           * type1 编码规则
+           * 
+           * 遍历数组、讲十进制数转成二进制数、再将不足8位的补足8位、不足16位的补足16位、不足24位的补足24位
+           * 当二进制数位数变化时、先存储解码规则
+           * 将16位二进制数分三段存储、第一段补0
+           * 将8位二进制数分一段存储
+           * 将24位二进制数分三段存储
+           * 再次遍历数组、将数组的 4 的倍数的项用 255 来填充
+           */
+          let pixelArray = [];
+          let prevStrLength = null;
+          for (let char of str) {
+            let binaryString = char.codePointAt(0).toString(2)
+            if (binaryString.length <= 8) {
+              binaryString = binaryString.padStart(8, '0');
+            } else if (binaryString.length <= 16) {
+              binaryString = binaryString.padStart(16, '0');
+            } else {
+              binaryString = binaryString.padStart(24, '0');
+            }
+            let currentStrLength = binaryString.length;
+            if (currentStrLength !== prevStrLength) {
+              pixelArray.push(-Number(currentStrLength.toString()));
+            }
+            prevStrLength = currentStrLength;
+            if (binaryString.length === 16) {
+              const part1 = binaryString.slice(0, 8);
+              const part2 = binaryString.slice(8, 16);
+              const decimalPart1 = parseInt(part1, 2);
+              const decimalPart2 = parseInt(part2, 2);
+              pixelArray.push(0, decimalPart1, decimalPart2);
+            } else if (binaryString.length === 8) {
+              const part1 = binaryString.slice(0, 8);
+              const decimalPart1 = parseInt(part1, 2);
+              pixelArray.push(decimalPart1);
+            } else {
+              const part1 = binaryString.slice(0, 8);
+              const part2 = binaryString.slice(8, 16);
+              const part3 = binaryString.slice(16, 24);
+              const decimalPart1 = parseInt(part1, 2);
+              const decimalPart2 = parseInt(part2, 2);
+              const decimalPart3 = parseInt(part3, 2);
+              pixelArray.push(decimalPart1, decimalPart2, decimalPart3);
+            }
+          }
+          for (let i = 3; i <= pixelArray.length; i += 4) {
+            pixelArray.splice(i, 0, 255);
+          }
+          return pixelArray;
+        }
+        if (this.encodeType === encodeType2) {
+          // 补全代码：按照type2类型编码，生成像素数组，数组格式需要支持使用downloadImage函数生成对应图片
+
+          /**
+           * type2 编码规则
+           * 
+           * 遍历数组、讲十进制数转成二进制数、再将不足24位的补足24位
+           * 将24位二进制数分四段存储、最后一段用 255 来填充
+           */
+          let pixelArray = [];
+          for (let char of str) {
+            let binaryString = char.codePointAt(0).toString(2)
+            binaryString = binaryString.padStart(24, '0');
+            const part1 = binaryString.slice(0, 8);
+            const part2 = binaryString.slice(8, 16);
+            const part3 = binaryString.slice(16, 24);
+            const decimalPart1 = parseInt(part1, 2);
+            const decimalPart2 = parseInt(part2, 2);
+            const decimalPart3 = parseInt(part3, 2);
+            pixelArray.push(decimalPart1, decimalPart2, decimalPart3, 255);
+          }
+          return pixelArray;
+        }
+      }
+
+      getStringByImageArray(arr) {
+        const data = this.#pixToData(arr);
+
+        if (this.encodeType === encodeType1) {
+          // 补全代码：按照type1类型对应的getImageArrayByString逻辑，还原像素数组为原始字符串
+
+          /**
+           * type1 解码规则
+           * 
+           * 遍历数组、现将所有十进制数转换为二进制数、「解码规则(负数)」不处理
+           * 再次遍历数组、当遍历到解码规则时、更新解码规则并继续遍历
+           * 当遍历到二进制数时、按照解码规则拼接二进制数并将其转换为十进制数
+           * 再次遍历数组、讲十进制数由「unicode」转为「字符」
+           * 拼接字符组成字符串
+           */
+          let result = [];
+          let state = undefined;
+          const binaryArr = data.map(num => {
+            if (num < 0) {
+              return num;
+            }
+            return num.toString(2).padStart(8, '0');
+          });
+          for (let i = 0; i < binaryArr.length; i++) {
+            if (binaryArr[i] === -8) {
+              state = 'English';
+              continue;
+            } else if (binaryArr[i] === -16) {
+              state = 'Chinese';
+              continue;
+            } else if (binaryArr[i] === -24) {
+              state = 'Emoji';
+              continue;
+            }
+            if (state === 'Chinese' || state === 'Emoji') {
+              let binaryString = '';
+              for (let j = 0; j < 3 && i + j < binaryArr.length; j++) {
+                if (binaryArr[i + j] < 0) break;
+                binaryString += binaryArr[i + j].toString(2).padStart(8, '0');
+              }
+              result.push(parseInt(binaryString, 2));
+              i += 2;
+            } else if (state === 'English') {
+              result.push(parseInt(binaryArr[i].toString(2), 2));
+            }
+          }
+          result = result.map(binStr => {
+            return String.fromCodePoint(binStr);
+          })
+          return result.join('');
+        }
+
+        if (this.encodeType === encodeType2) {
+          // 补全代码：按照type2类型对应的getImageArrayByString逻辑，还原像素数组为原始字符串
+
+          /**
+           * type2 解码规则
+           * 
+           * 遍历数组、现将所有十进制数转换为二进制数
+           * 把每三个二进制数拼接后转换成十进制数
+           * 再次遍历数组、讲十进制数由「unicode」转为「字符」
+           * 拼接字符组成字符串
+           */
+          let result = []
+          let binaryString = ''
+          const binaryArr = data.map(num => num.toString(2).padStart(8, '0'));
+          for (let i = 0; i < binaryArr.length; i += 3) {
+            binaryString = binaryArr[i] + binaryArr[i + 1] + binaryArr[i + 2]
+            result.push(parseInt(binaryString, 2))
+          }
+          result = result.map(binStr => {
+            return String.fromCodePoint(binStr);
+          })
+          return result.join('');
+        }
+      }
+    }
+    // 评分规则：
+    // getImageArrayByString的返回值正确，45分
+    // getStringByImageArray的返回值正确，45分
+    // downloadImage下载图片正确，10分
+
+    // 执行逻辑，不可修改下列代码
+
+    const type1Handler = new ImageHandler(encodeType1);
+    const pixArray1 = type1Handler.getImageArrayByString(testStr);
+    console.log(pixArray1);
+    console.log(pixArray1.length === 56); // 注意：该条log需要返回true
+    const str1 = type1Handler.getStringByImageArray(pixArray1);
+    console.log(str1);
+    type1Handler.downloadImage({ fileName: `${encodeType1}_${imageFileName}`, data: pixArray1, width: 2, height: 7 });
+
+    const type2Handler = new ImageHandler(encodeType2);
+    const pixArray2 = type2Handler.getImageArrayByString(testStr);
+    console.log(pixArray2);
+    console.log(pixArray2.length === 80); // 注意：该条log需要返回true
+    const str2 = type2Handler.getStringByImageArray(pixArray2);
+    console.log(str2);
+    type2Handler.downloadImage({ fileName: `${encodeType2}_${imageFileName}`, data: pixArray2, width: 4, height: 5 });
+  </script>
+</body>
+
+</html>

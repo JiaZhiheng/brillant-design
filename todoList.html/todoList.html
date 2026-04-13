@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Todo List</title>
+  <script src="https://unpkg.com/vue@3.2.47/dist/vue.global.js"></script>
+  <style>
+    .todo-item {
+      display: flex;
+      align-items: center;
+    }
+    .todo-item input {
+      margin-right: 10px;
+    }
+    .todo-item button {
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>Todo List</h1>
+    <div v-for="(item, index) in todos" :key="index" class="todo-item">
+      <input 
+        type="text" 
+        v-model.trim="todos[index]" 
+        @focus="onFocus(index)" 
+        @blur="onBlur"
+      />
+      <button @click="removeTodo(index)">删除</button>
+    </div>
+    <button @click="addTodo">添加任务</button>
+    <button @click="submitForm">提交表单</button>
+  </div>
+
+  <script>
+    const { createApp, ref } = Vue;
+
+    createApp({
+      setup() {
+        const todos = ref(['','']);
+        const currentFocusedIndex = ref(null);
+
+        const addTodo = () => {
+          todos.value.push('');
+        };
+
+        const removeTodo = (index) => {
+          if (todos.value.length <= 2) {
+            return;
+          }
+          todos.value.splice(index, 1);
+          validateTodos();
+        };
+
+        const onFocus = (index) => {
+          currentFocusedIndex.value = index;
+        };
+
+        const onBlur = () => {
+          currentFocusedIndex.value = null;
+          validateTodos();
+        };
+
+        const validateTodos = () => {
+          if (currentFocusedIndex.value !== null) return;
+
+          if (todos.value.length < 2 || todos.value.some(todo => !todo.text)) {
+          }
+        };
+
+        const submitForm = () => {
+          console.log("表单提交：", JSON.stringify(todos.value));
+        };
+
+        return {
+          todos,
+          addTodo,
+          removeTodo,
+          onFocus,
+          onBlur,
+          submitForm
+        };
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>

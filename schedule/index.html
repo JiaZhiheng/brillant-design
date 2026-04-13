@@ -8,8 +8,9 @@
   <title>定制课程表</title>
   <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="./index.css" />
-  <script src="./index.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.0/html2canvas.min.js"></script>
+  <link rel="stylesheet" href="./responsive.css" />
+  <script type="module" src="./js/app.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.0/html2canvas.min.js" onerror="window.__html2canvasLoaded=false"></script>
 </head>
 
 <body>
@@ -22,6 +23,7 @@
       </div>
       <table>
         <colgroup>
+          <col />
           <col />
           <col />
           <col />
@@ -47,11 +49,11 @@
           <tr>
             <th class="controlable editable" rowspan="6">上午</th>
             <td class="controlable editable">09:00-09:30</td>
-            <td class="editable" colspan="7">早读</td>
+            <td class="editable" colspan="7" data-controlable="split">早读</td>
           </tr>
           <tr>
             <td class="controlable editable">09:35-10:20</td>
-            <td data-drop="copy"></td>
+            <td data-drop="copy" data-controlable="merge"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
@@ -61,7 +63,7 @@
           </tr>
           <tr>
             <td class="controlable editable">10:30-11:15</td>
-            <td data-drop="copy"></td>
+            <td data-drop="copy" data-controlable="merge"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
@@ -71,11 +73,11 @@
           </tr>
           <tr>
             <td class="controlable editable">11:15-11:40</td>
-            <td class="editable" colspan="7">课间操</td>
+            <td class="editable" colspan="7" data-controlable="split">课间操</td>
           </tr>
           <tr>
             <td class="controlable editable">11:40-12:25</td>
-            <td data-drop="copy"></td>
+            <td data-drop="copy" data-controlable="merge"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
@@ -85,7 +87,7 @@
           </tr>
           <tr>
             <td class="controlable editable">12:35-13:20</td>
-            <td data-drop="copy"></td>
+            <td data-drop="copy" data-controlable="merge"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
@@ -96,12 +98,12 @@
           <tr>
             <th class="controlable editable" rowspan="1">中午</th>
             <td class="controlable editable">13:20-16:30</td>
-            <td class="editable" colspan="7">午休</td>
+            <td class="editable" colspan="7" data-controlable="split">午休</td>
           </tr>
           <tr>
             <th class="controlable editable" rowspan="5">下午</th>
             <td class="controlable editable">16:35-17:20</td>
-            <td data-drop="copy"></td>
+            <td data-drop="copy" data-controlable="merge"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
@@ -111,7 +113,7 @@
           </tr>
           <tr>
             <td class="controlable editable">17:30-18:15</td>
-            <td data-drop="copy"></td>
+            <td data-drop="copy" data-controlable="merge"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
@@ -121,11 +123,11 @@
           </tr>
           <tr>
             <td class="controlable editable">18:15-18:30</td>
-            <td class="editable" colspan="7">眼保健操</td>
+            <td class="editable" colspan="7" data-controlable="split">眼保健操</td>
           </tr>
           <tr>
             <td class="controlable editable">18:30-19:15</td>
-            <td data-drop="copy"></td>
+            <td data-drop="copy" data-controlable="merge"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
@@ -135,7 +137,7 @@
           </tr>
           <tr>
             <td class="controlable editable">19:25-20:10</td>
-            <td data-drop="copy"></td>
+            <td data-drop="copy" data-controlable="merge"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
@@ -146,11 +148,11 @@
           <tr>
             <th class="controlable editable" rowspan="3">晚上</th>
             <td class="controlable editable">20:10-21:00</td>
-            <td class="editable" colspan="7">晚饭</td>
+            <td class="editable" colspan="7" data-controlable="split">晚饭</td>
           </tr>
           <tr>
             <td class="controlable editable">21:00-21:45</td>
-            <td data-drop="copy"></td>
+            <td data-drop="copy" data-controlable="merge"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
@@ -160,7 +162,7 @@
           </tr>
           <tr>
             <td class="controlable editable">21:55-22:40</td>
-            <td data-drop="copy"></td>
+            <td data-drop="copy" data-controlable="merge"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
             <td data-drop="copy"></td>
@@ -206,19 +208,19 @@
         <div data-effect="copy" data-type="minor" draggable="true" class="red item">信息技术</div>
         <div data-effect="copy" data-type="minor" draggable="true" class="volcano item">思想品德</div>
         <div data-effect="copy" data-type="minor" draggable="true" class="orange item">心理健康</div>
-        <button class="button add" title="add" disabled onclick="addCard()"></button>
+        <button class="button add" title="add" disabled></button>
       </div>
       <div class="control">
-        <button class="button arrange" onclick="arrange()">排课</button>
-        <button class="button empty" onclick="empty()">清空</button>
-        <button class="button coloring" onclick="coloring()">着色</button>
-        <button class="button fade" onclick="fade()">褪色</button>
-        <button class="button print" onclick="print()">打印</button>
-        <button class="button drag" disabled onclick="drag()">拖拽</button>
-        <button class="button edit" onclick="edit()">编辑</button>
-        <button class="button archive" onclick="archive()">存档</button>
-        <button class="button load" onclick="load()">读档</button>
-        <button class="button init" onclick="init()">初始化</button>
+        <button class="button arrange">排课</button>
+        <button class="button empty">清空</button>
+        <button class="button coloring">着色</button>
+        <button class="button fade">褪色</button>
+        <button class="button print">打印</button>
+        <button class="button drag" disabled>拖拽</button>
+        <button class="button edit">编辑</button>
+        <button class="button archive">存档</button>
+        <button class="button load">读档</button>
+        <button class="button init">初始化</button>
       </div>
     </div>
   </div>
